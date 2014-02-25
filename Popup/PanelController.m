@@ -8,8 +8,8 @@
 
 #define SEARCH_INSET 17
 
-#define POPUP_HEIGHT 122
-#define PANEL_WIDTH 280
+#define POPUP_HEIGHT 230
+#define PANEL_WIDTH 300
 #define MENU_ANIMATION_DURATION .1
 
 #pragma mark -
@@ -19,7 +19,9 @@
 @synthesize backgroundView = _backgroundView;
 @synthesize delegate = _delegate;
 @synthesize searchField = _searchField;
-@synthesize textField = _textField;
+@synthesize outlineView = _outlineView;
+@synthesize addButton = _addButton;
+@synthesize helpButton = _helpButton;
 
 #pragma mark -
 
@@ -94,6 +96,23 @@
     }
 }
 
+void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
+{
+    NSRect frame = [field frame];
+    frame.origin.x = x;
+    frame.origin.y = y;
+    
+    if (NSIsEmptyRect(frame))
+    {
+        [field setHidden:YES];
+    }
+    else
+    {
+        [field setFrame:frame];
+        [field setHidden:NO];
+    }
+}
+
 - (void)windowDidResize:(NSNotification *)notification
 {
     NSWindow *panel = [self window];
@@ -105,36 +124,11 @@
     
     self.backgroundView.arrowX = panelX;
     
-    NSRect searchRect = [self.searchField frame];
-    searchRect.size.width = NSWidth([self.backgroundView bounds]) - SEARCH_INSET * 2;
-    searchRect.origin.x = SEARCH_INSET;
-    searchRect.origin.y = NSHeight([self.backgroundView bounds]) - ARROW_HEIGHT - SEARCH_INSET - NSHeight(searchRect);
-    
-    if (NSIsEmptyRect(searchRect))
-    {
-        [self.searchField setHidden:YES];
-    }
-    else
-    {
-        [self.searchField setFrame:searchRect];
-        [self.searchField setHidden:NO];
-    }
-    
-    NSRect textRect = [self.textField frame];
-    textRect.size.width = NSWidth([self.backgroundView bounds]) - SEARCH_INSET * 2;
-    textRect.origin.x = SEARCH_INSET;
-    textRect.size.height = NSHeight([self.backgroundView bounds]) - ARROW_HEIGHT - SEARCH_INSET * 3 - NSHeight(searchRect);
-    textRect.origin.y = SEARCH_INSET;
-    
-    if (NSIsEmptyRect(textRect))
-    {
-        [self.textField setHidden:YES];
-    }
-    else
-    {
-        [self.textField setFrame:textRect];
-        [self.textField setHidden:NO];
-    }
+    NSRect bounds = [self.backgroundView bounds];
+    adjust_view(self.searchField, bounds, 10, 10);
+    adjust_view(self.outlineView, bounds, 10, 15 + NSHeight([self.searchField frame]));
+    adjust_view(self.addButton, bounds, 10, POPUP_HEIGHT - NSHeight([self.helpButton frame]) - 20);
+    adjust_view(self.helpButton, bounds, PANEL_WIDTH - NSWidth([self.helpButton frame]) - 10, POPUP_HEIGHT - NSHeight([self.helpButton frame]) - 15);
 }
 
 #pragma mark - Keyboard
@@ -153,7 +147,6 @@
         searchFormat = NSLocalizedString(@"Search for ‘%@’…", @"Format for search request");
     }
     NSString *searchRequest = [NSString stringWithFormat:searchFormat, searchString];
-    [self.textField setStringValue:searchRequest];
 }
 
 #pragma mark - Public methods
