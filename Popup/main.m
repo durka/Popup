@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 {
     printf("hello world!\n");
     
-    @try
+    /*@try
     {
         GPGManager* gm = [[GPGManager alloc] init];
         char *pass = [gm decryptPasswordFromFile:"/Users/alex/.password-store/Web/cloudatcost/aburka1.gpg"];
@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     @catch (NSException *e)
     {
         printf("Error in decryption: %s %s\n", [[e name] UTF8String], [[e reason] UTF8String]);
-    }
+    }*/
     
     return NSApplicationMain(argc, (const char **)argv);
 }

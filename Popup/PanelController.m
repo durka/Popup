@@ -2,6 +2,7 @@
 #import "BackgroundView.h"
 #import "StatusItemView.h"
 #import "MenubarController.h"
+#import "FileSystemItem.h"
 
 #define OPEN_DURATION .15
 #define CLOSE_DURATION .1
@@ -31,6 +32,7 @@
     if (self != nil)
     {
         _delegate = delegate;
+        file_manager = [[NSFileManager alloc] init];
     }
     return self;
 }
@@ -126,7 +128,7 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
     
     NSRect bounds = [self.backgroundView bounds];
     adjust_view(self.searchField, bounds, 10, 10);
-    adjust_view(self.outlineView, bounds, 10, 15 + NSHeight([self.searchField frame]));
+    adjust_view(self.scrollView, bounds, 13, 15 + NSHeight([self.searchField frame]));
     adjust_view(self.addButton, bounds, 10, POPUP_HEIGHT - NSHeight([self.helpButton frame]) - 20);
     adjust_view(self.helpButton, bounds, PANEL_WIDTH - NSWidth([self.helpButton frame]) - 10, POPUP_HEIGHT - NSHeight([self.helpButton frame]) - 15);
 }
@@ -179,6 +181,17 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
 - (void)openPanel
 {
     NSWindow *panel = [self window];
+    
+    // re-populate list
+    printf("Populating list\n");
+    NSString *file;
+    NSDirectoryEnumerator *dir_enum = [[[NSFileManager alloc] init]
+                                            enumeratorAtPath:[NSHomeDirectory() stringByAppendingPathComponent:@".password-store"]];
+    while (file = [dir_enum nextObject]) {
+        if ([[file pathExtension] isEqualToString:@"gpg"]) {
+            printf("\t%s\n", [file UTF8String]);
+        }
+    }
     
     NSRect screenRect = [[[NSScreen screens] objectAtIndex:0] frame];
     NSRect statusRect = [self statusRectForWindow:panel];
@@ -235,6 +248,29 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
         
         [self.window orderOut:nil];
     });
+}
+
+// from https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/OutlineView/Articles/UsingOutlineDataSource.html#//apple_ref/doc/uid/20000725-BBCDGDAG
+- (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item
+{
+    return (item == nil) ? 1 : [item numberOfChildren];
+}
+
+- (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item
+{
+    printf("Is %s expandable? %d children\n", [[item fullPath] UTF8String], [item numberOfChildren]);
+    return (item == nil) ? YES : ([item numberOfChildren] != -1);
+}
+
+- (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item
+{
+    printf("Child %d of item %s\n", index, [[item relativePath] UTF8String]);
+    return (item == nil) ? [FileSystemItem rootItem] : [(FileSystemItem *)item childAtIndex:index];
+}
+
+- (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item
+{
+    return (item == nil) ? @"NULL" : [[item relativePath] stringByDeletingPathExtension];
 }
 
 @end

@@ -22,6 +22,7 @@
 		DDF4EFAC16C80A510044D141 /* Status@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DDF4EFAB16C80A510044D141 /* Status@2x.png */; };
 		DDF4EFAE16C80AD30044D141 /* StatusHighlighted@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DDF4EFAD16C80AD30044D141 /* StatusHighlighted@2x.png */; };
 		FA15C3B518BD49390038F09D /* GPGManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FA15C3B418BD49390038F09D /* GPGManager.m */; };
+		FA15C3BB18C30F370038F09D /* FileSystemItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FA15C3BA18C30F370038F09D /* FileSystemItem.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,6 +54,8 @@
 		DDF4EFAD16C80AD30044D141 /* StatusHighlighted@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "StatusHighlighted@2x.png"; path = "Popup/StatusHighlighted@2x.png"; sourceTree = "<group>"; };
 		FA15C3B318BD49390038F09D /* GPGManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPGManager.h; sourceTree = "<group>"; };
 		FA15C3B418BD49390038F09D /* GPGManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPGManager.m; sourceTree = "<group>"; };
+		FA15C3B918C30F370038F09D /* FileSystemItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemItem.h; sourceTree = "<group>"; };
+		FA15C3BA18C30F370038F09D /* FileSystemItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemItem.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +131,8 @@
 				DD4F7C3713C317A500825C6E /* MenubarController.m */,
 				DD4F7C3D13C318D600825C6E /* PanelController.h */,
 				DD4F7C3E13C318D600825C6E /* PanelController.m */,
+				FA15C3B918C30F370038F09D /* FileSystemItem.h */,
+				FA15C3BA18C30F370038F09D /* FileSystemItem.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -248,6 +253,7 @@
 				DD4F7C3F13C318D600825C6E /* PanelController.m in Sources */,
 				DD4F7C4413C31BD200825C6E /* Panel.m in Sources */,
 				DD4F7C4713C3208500825C6E /* BackgroundView.m in Sources */,
+				FA15C3BB18C30F370038F09D /* FileSystemItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
