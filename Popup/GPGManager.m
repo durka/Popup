@@ -74,14 +74,14 @@
     return 0;
 }
 
--(char*) decryptPasswordFromFile:(const char*)encrypted_file
+-(NSString*) decryptPasswordFromFile:(NSString*)encrypted_file
 {
     int fd = -1;
     char *decrypted = NULL;
     
     @try
     {
-        fd = [GPGManager check:open(encrypted_file, O_RDONLY)
+        fd = [GPGManager check:open([encrypted_file UTF8String], O_RDONLY)
                           what:"Open file"];
         
         gpgme_data_t ciphertext, plaintext;
@@ -105,7 +105,11 @@
                                     what:"reading plaintext buffer"];
         assert(read == pass_len);
         
-        return decrypted;
+        NSString *str = [NSString
+                            stringWithCString:decrypted
+                            encoding:NSASCIIStringEncoding];
+        free(decrypted);
+        return [str substringToIndex:([str length]-1)];
     }
     @catch (NSException *e)
     {

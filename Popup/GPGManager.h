@@ -23,7 +23,7 @@
 -(void) dealloc;
 
 -(gpgme_error_t) writePassphraseToFile:(int)fd firstTry:(bool)first;
--(char*) decryptPasswordFromFile:(const char*)encrypted_file;
+-(NSString*) decryptPasswordFromFile:(NSString*)encrypted_file;
 
 @end
 

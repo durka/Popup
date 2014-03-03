@@ -33,6 +33,7 @@
     {
         _delegate = delegate;
         file_manager = [[NSFileManager alloc] init];
+        gpg = [[GPGManager alloc] init];
     }
     return self;
 }
@@ -271,6 +272,26 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item
 {
     return (item == nil) ? @"NULL" : [[item relativePath] stringByDeletingPathExtension];
+}
+
+- (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item
+{
+    return ![self outlineView:outlineView isItemExpandable:item];
+}
+
+- (void)outlineViewSelectionDidChange:(NSNotification *)notification
+{
+    id item = [_outlineView itemAtRow:[_outlineView selectedRow]];
+    if (item != nil) {
+        printf("decrypting %s\n", [[item fullPath] UTF8String]);
+        NSString *plain = [gpg decryptPasswordFromFile:[item fullPath]];
+        NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+        [pasteboard clearContents];
+        [pasteboard
+            writeObjects:[NSArray
+                            arrayWithObject:plain]];
+        [_outlineView deselectAll:item];
+    }
 }
 
 @end

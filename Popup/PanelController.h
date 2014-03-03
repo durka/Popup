@@ -1,5 +1,6 @@
 #import "BackgroundView.h"
 #import "StatusItemView.h"
+#import "GPGManager.h"
 
 @class PanelController;
 
@@ -17,6 +18,7 @@
 {
     BOOL _hasActivePanel;
     NSFileManager *file_manager;
+    GPGManager *gpg;
     __unsafe_unretained BackgroundView *_backgroundView;
     __unsafe_unretained id<PanelControllerDelegate> _delegate;
     __unsafe_unretained NSSearchField *_searchField;
@@ -47,5 +49,8 @@
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item;
 - (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item;
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item;
+// NSOutlineView delegate
+- (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item;
+- (void)outlineViewSelectionDidChange:(NSNotification *)notification;
 
 @end
