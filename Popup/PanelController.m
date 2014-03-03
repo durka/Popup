@@ -291,6 +291,12 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
             writeObjects:[NSArray
                             arrayWithObject:plain]];
         [_outlineView deselectAll:item];
+        [NSTimer
+            scheduledTimerWithTimeInterval:45
+            target:pasteboard
+            selector:@selector(clearContents)
+            userInfo:nil
+            repeats:NO];
     }
 }
 
