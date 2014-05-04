@@ -34,8 +34,9 @@ static NSMutableArray *leafNode = nil;
 
 + (FileSystemItem *)rootItem
 {
-    // TODO fix this madness
-    if (rootItem == nil) {
+    // TODO fix this backwards nesting madness
+    // FIXME rootItem is always regenerated as a hack to refresh the tree
+    if (true || rootItem == nil) {
         rootItem = [[FileSystemItem alloc]
                         initWithPath:@".password-store"
                         parent:[[FileSystemItem alloc]
@@ -61,7 +62,9 @@ static NSMutableArray *leafNode = nil;
         valid = [fileManager fileExistsAtPath:fullPath isDirectory:&isDir];
         
         if (valid && isDir) {
-            NSArray *array = [fileManager contentsOfDirectoryAtPath:fullPath error:NULL];
+            NSArray *array = [fileManager
+                              contentsOfDirectoryAtPath:fullPath
+                              error:NULL];
             NSUInteger numChildren, i;
             numChildren = [array count];
             children = [[NSMutableArray alloc] initWithCapacity:numChildren];
@@ -87,6 +90,18 @@ static NSMutableArray *leafNode = nil;
 - (NSString *)relativePath
 {
     return relativePath;
+}
+
+// like fullPath, but stop at rootItem
+- (NSString *)partialPath
+{
+    // if no parent or we reached the root, stop
+    if (parent == nil || parent == rootItem) {
+        return relativePath;
+    }
+    
+    // recurse up the hierarchy, prepending each parent's path
+    return [[parent partialPath] stringByAppendingPathComponent:relativePath];
 }
 
 - (NSString *)fullPath

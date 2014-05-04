@@ -52,5 +52,7 @@
 // NSOutlineView delegate
 - (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item;
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification;
+// NSUserNotificationCenter delegate
+- (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center shouldPresentNotification:(NSUserNotification *)notification;
 
 @end

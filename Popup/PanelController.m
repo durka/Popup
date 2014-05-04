@@ -40,7 +40,10 @@
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSControlTextDidChangeNotification object:self.searchField];
+    [[NSNotificationCenter defaultCenter]
+     removeObserver:self
+     name:NSControlTextDidChangeNotification
+     object:self.searchField];
 }
 
 #pragma mark -
@@ -57,7 +60,11 @@
     [panel setBackgroundColor:[NSColor clearColor]];
     
     // Follow search string
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(runSearch) name:NSControlTextDidChangeNotification object:self.searchField];
+    [[NSNotificationCenter defaultCenter]
+     addObserver:self
+     selector:@selector(runSearch)
+     name:NSControlTextDidChangeNotification
+     object:self.searchField];
 }
 
 #pragma mark - Public accessors
@@ -128,10 +135,18 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
     self.backgroundView.arrowX = panelX;
     
     NSRect bounds = [self.backgroundView bounds];
-    adjust_view(self.searchField, bounds, 10, 10);
-    adjust_view(self.scrollView, bounds, 13, 15 + NSHeight([self.searchField frame]));
-    adjust_view(self.addButton, bounds, 10, POPUP_HEIGHT - NSHeight([self.helpButton frame]) - 20);
-    adjust_view(self.helpButton, bounds, PANEL_WIDTH - NSWidth([self.helpButton frame]) - 10, POPUP_HEIGHT - NSHeight([self.helpButton frame]) - 15);
+    adjust_view(self.searchField, bounds,
+                10,
+                10);
+    adjust_view(self.scrollView, bounds,
+                13,
+                15 + NSHeight([self.searchField frame]));
+    adjust_view(self.addButton, bounds,
+                10,
+                POPUP_HEIGHT - NSHeight([self.helpButton frame]) - 20);
+    adjust_view(self.helpButton, bounds,
+                PANEL_WIDTH - NSWidth([self.helpButton frame]) - 10,
+                POPUP_HEIGHT - NSHeight([self.helpButton frame]) - 15);
 }
 
 #pragma mark - Keyboard
@@ -147,9 +162,11 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
     NSString *searchString = [self.searchField stringValue];
     if ([searchString length] > 0)
     {
-        searchFormat = NSLocalizedString(@"Search for ‘%@’…", @"Format for search request");
+        searchFormat = NSLocalizedString(@"Search for ‘%@’…",
+                                         @"Format for search request");
     }
-    NSString *searchRequest = [NSString stringWithFormat:searchFormat, searchString];
+    NSString *searchRequest = [NSString
+                               stringWithFormat:searchFormat, searchString];
 }
 
 #pragma mark - Public methods
@@ -160,9 +177,11 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
     NSRect statusRect = NSZeroRect;
     
     StatusItemView *statusItemView = nil;
-    if ([self.delegate respondsToSelector:@selector(statusItemViewForPanelController:)])
+    if ([self.delegate
+         respondsToSelector:@selector(statusItemViewForPanelController:)])
     {
-        statusItemView = [self.delegate statusItemViewForPanelController:self];
+        statusItemView = [self.delegate
+                          statusItemViewForPanelController:self];
     }
     
     if (statusItemView)
@@ -172,8 +191,10 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
     }
     else
     {
-        statusRect.size = NSMakeSize(STATUS_ITEM_VIEW_WIDTH, [[NSStatusBar systemStatusBar] thickness]);
-        statusRect.origin.x = roundf((NSWidth(screenRect) - NSWidth(statusRect)) / 2);
+        statusRect.size = NSMakeSize(STATUS_ITEM_VIEW_WIDTH,
+                                     [[NSStatusBar systemStatusBar] thickness]);
+        statusRect.origin.x = roundf((NSWidth(screenRect)
+                                      - NSWidth(statusRect)) / 2);
         statusRect.origin.y = NSHeight(screenRect) - NSHeight(statusRect) * 2;
     }
     return statusRect;
@@ -184,15 +205,7 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
     NSWindow *panel = [self window];
     
     // re-populate list
-    printf("Populating list\n");
-    NSString *file;
-    NSDirectoryEnumerator *dir_enum = [[[NSFileManager alloc] init]
-                                            enumeratorAtPath:[NSHomeDirectory() stringByAppendingPathComponent:@".password-store"]];
-    while (file = [dir_enum nextObject]) {
-        if ([[file pathExtension] isEqualToString:@"gpg"]) {
-            printf("\t%s\n", [file UTF8String]);
-        }
-    }
+    [_outlineView reloadData];
     
     NSRect screenRect = [[[NSScreen screens] objectAtIndex:0] frame];
     NSRect statusRect = [self statusRectForWindow:panel];
@@ -204,7 +217,8 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
     panelRect.origin.y = NSMaxY(statusRect) - NSHeight(panelRect);
     
     if (NSMaxX(panelRect) > (NSMaxX(screenRect) - ARROW_HEIGHT))
-        panelRect.origin.x -= NSMaxX(panelRect) - (NSMaxX(screenRect) - ARROW_HEIGHT);
+        panelRect.origin.x -= NSMaxX(panelRect)
+                              - (NSMaxX(screenRect) - ARROW_HEIGHT);
     
     [NSApp activateIgnoringOtherApps:NO];
     [panel setAlphaValue:0];
@@ -216,16 +230,24 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
     NSEvent *currentEvent = [NSApp currentEvent];
     if ([currentEvent type] == NSLeftMouseDown)
     {
-        NSUInteger clearFlags = ([currentEvent modifierFlags] & NSDeviceIndependentModifierFlagsMask);
-        BOOL shiftPressed = (clearFlags == NSShiftKeyMask);
-        BOOL shiftOptionPressed = (clearFlags == (NSShiftKeyMask | NSAlternateKeyMask));
+        NSUInteger clearFlags = ([currentEvent modifierFlags]
+                                 & NSDeviceIndependentModifierFlagsMask);
+        BOOL shiftPressed = (clearFlags
+                             == NSShiftKeyMask);
+        BOOL shiftOptionPressed = (clearFlags
+                                   == (NSShiftKeyMask | NSAlternateKeyMask));
+        
         if (shiftPressed || shiftOptionPressed)
         {
             openDuration *= 10;
             
             if (shiftOptionPressed)
-                NSLog(@"Icon is at %@\n\tMenu is on screen %@\n\tWill be animated to %@",
-                      NSStringFromRect(statusRect), NSStringFromRect(screenRect), NSStringFromRect(panelRect));
+                NSLog(@"Icon is at %@\n\t"
+                      @"Menu is on screen %@\n\t"
+                      @"Will be animated to %@",
+                      NSStringFromRect(statusRect),
+                      NSStringFromRect(screenRect),
+                      NSStringFromRect(panelRect));
         }
     }
     
@@ -235,7 +257,10 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
     [[panel animator] setAlphaValue:1];
     [NSAnimationContext endGrouping];
     
-    [panel performSelector:@selector(makeFirstResponder:) withObject:self.searchField afterDelay:openDuration];
+    [panel
+     performSelector:@selector(makeFirstResponder:)
+     withObject:self.searchField
+     afterDelay:openDuration];
 }
 
 - (void)closePanel
@@ -245,8 +270,8 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
     [[[self window] animator] setAlphaValue:0];
     [NSAnimationContext endGrouping];
     
-    dispatch_after(dispatch_walltime(NULL, NSEC_PER_SEC * CLOSE_DURATION * 2), dispatch_get_main_queue(), ^{
-        
+    dispatch_after(dispatch_walltime(NULL, NSEC_PER_SEC * CLOSE_DURATION * 2),
+                   dispatch_get_main_queue(), ^{
         [self.window orderOut:nil];
     });
 }
@@ -254,24 +279,33 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
 // from https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/OutlineView/Articles/UsingOutlineDataSource.html#//apple_ref/doc/uid/20000725-BBCDGDAG
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item
 {
-    return (item == nil) ? 1 : [item numberOfChildren];
+    return [((item == nil)
+             ? [FileSystemItem rootItem]
+             : item)
+            numberOfChildren];
 }
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item
 {
-    printf("Is %s expandable? %d children\n", [[item fullPath] UTF8String], [item numberOfChildren]);
     return (item == nil) ? YES : ([item numberOfChildren] != -1);
 }
 
-- (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item
+- (id)outlineView:(NSOutlineView *)outlineView
+        child:(NSInteger)index
+        ofItem:(id)item
 {
-    printf("Child %d of item %s\n", index, [[item relativePath] UTF8String]);
-    return (item == nil) ? [FileSystemItem rootItem] : [(FileSystemItem *)item childAtIndex:index];
+    return [((item == nil)
+             ? [FileSystemItem rootItem]
+             : item)
+            childAtIndex:index];
 }
 
-- (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item
+- (id)outlineView:(NSOutlineView *)outlineView
+        objectValueForTableColumn:(NSTableColumn *)tableColumn
+        byItem:(id)item
 {
-    return (item == nil) ? @"NULL" : [[item relativePath] stringByDeletingPathExtension];
+    return (item == nil) ? @"NULL" : [[item relativePath]
+                                      stringByDeletingPathExtension];
 }
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item
@@ -283,6 +317,8 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
 {
     id item = [_outlineView itemAtRow:[_outlineView selectedRow]];
     if (item != nil) {
+        
+        // post decrypted password to clipboard
         printf("decrypting %s\n", [[item fullPath] UTF8String]);
         NSString *plain = [gpg decryptPasswordFromFile:[item fullPath]];
         NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
@@ -291,13 +327,41 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
             writeObjects:[NSArray
                             arrayWithObject:plain]];
         [_outlineView deselectAll:item];
+        
+        int timeout = 45;
+        
+        // show notification
+        // credit http://blog.mahasoftware.com/post/28968246552/how-to-use-the-10-8-notification-center-api
+        NSUserNotification *notification = [[NSUserNotification alloc] init];
+        [notification setTitle:@"Password Store"];
+        [notification
+         setInformativeText:[NSString
+                             stringWithFormat:@"Copied %@ to clipboard. "
+                                              @"Will clear in %d seconds.",
+                                [[item partialPath]
+                                   stringByDeletingPathExtension],
+                                timeout]];
+        [notification setSoundName:NSUserNotificationDefaultSoundName];
+        
+        NSUserNotificationCenter *center = [NSUserNotificationCenter
+                                            defaultUserNotificationCenter];
+        [center setDelegate:self];
+        [center deliverNotification:notification];
+        
+        // clear clipboard after 45 seconds
         [NSTimer
-            scheduledTimerWithTimeInterval:45
+            scheduledTimerWithTimeInterval:timeout
             target:pasteboard
             selector:@selector(clearContents)
             userInfo:nil
             repeats:NO];
     }
+}
+
+- (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center
+        shouldPresentNotification:(NSUserNotification *)notification
+{
+    return YES;
 }
 
 @end
