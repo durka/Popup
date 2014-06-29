@@ -25,7 +25,11 @@
     __unsafe_unretained NSScrollView *_scrollView;
     __unsafe_unretained NSOutlineView *_outlineView;
     __unsafe_unretained NSButton *_addButton;
+    __unsafe_unretained NSButton *_editButton;
+    __unsafe_unretained NSButton *_deleteButton;
     __unsafe_unretained NSButton *_helpButton;
+    
+    enum { COPY, ADD, EDIT, DELETE } state;
 }
 
 @property (nonatomic, unsafe_unretained) IBOutlet BackgroundView *backgroundView;
@@ -33,6 +37,8 @@
 @property (nonatomic, unsafe_unretained) IBOutlet NSScrollView *scrollView;
 @property (nonatomic, unsafe_unretained) IBOutlet NSOutlineView *outlineView;
 @property (nonatomic, unsafe_unretained) IBOutlet NSButton *addButton;
+@property (nonatomic, unsafe_unretained) IBOutlet NSButton *editButton;
+@property (nonatomic, unsafe_unretained) IBOutlet NSButton *deleteButton;
 @property (nonatomic, unsafe_unretained) IBOutlet NSButton *helpButton;
 
 @property (nonatomic) BOOL hasActivePanel;

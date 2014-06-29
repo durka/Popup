@@ -3,13 +3,14 @@
 #import "StatusItemView.h"
 #import "MenubarController.h"
 #import "FileSystemItem.h"
+#import "Utils.h"
 
 #define OPEN_DURATION .15
 #define CLOSE_DURATION .1
 
 #define SEARCH_INSET 17
 
-#define POPUP_HEIGHT 230
+#define POPUP_HEIGHT 400
 #define PANEL_WIDTH 300
 #define MENU_ANIMATION_DURATION .1
 
@@ -22,6 +23,8 @@
 @synthesize searchField = _searchField;
 @synthesize outlineView = _outlineView;
 @synthesize addButton = _addButton;
+@synthesize editButton = _editButton;
+@synthesize deleteButton = _deleteButton;
 @synthesize helpButton = _helpButton;
 
 #pragma mark -
@@ -34,6 +37,7 @@
         _delegate = delegate;
         file_manager = [[NSFileManager alloc] init];
         gpg = [[GPGManager alloc] init];
+        state = COPY;
     }
     return self;
 }
@@ -144,6 +148,12 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
     adjust_view(self.addButton, bounds,
                 10,
                 POPUP_HEIGHT - NSHeight([self.helpButton frame]) - 20);
+    adjust_view(self.editButton, bounds,
+                10 + NSWidth([self.addButton frame]),
+                POPUP_HEIGHT - NSHeight([self.helpButton frame]) - 20);
+    adjust_view(self.deleteButton, bounds,
+                10 + NSWidth([self.addButton frame]) + NSWidth([self.editButton frame]),
+                POPUP_HEIGHT - NSHeight([self.helpButton frame]) - 20);
     adjust_view(self.helpButton, bounds,
                 PANEL_WIDTH - NSWidth([self.helpButton frame]) - 10,
                 POPUP_HEIGHT - NSHeight([self.helpButton frame]) - 15);
@@ -158,15 +168,19 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
 
 - (void)runSearch
 {
-    NSString *searchFormat = @"";
     NSString *searchString = [self.searchField stringValue];
     if ([searchString length] > 0)
     {
-        searchFormat = NSLocalizedString(@"Search for ‘%@’…",
-                                         @"Format for search request");
+        printf("searching: %s\n", [searchString UTF8String]);
+        [FileSystemItem setFilter:searchString];
     }
-    NSString *searchRequest = [NSString
-                               stringWithFormat:searchFormat, searchString];
+    else
+    {
+        printf("clear search\n");
+        [FileSystemItem setFilter:nil];
+        
+    }
+    [_outlineView reloadData];
 }
 
 #pragma mark - Public methods
@@ -206,6 +220,7 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
     
     // re-populate list
     [_outlineView reloadData];
+    state = COPY;
     
     NSRect screenRect = [[[NSScreen screens] objectAtIndex:0] frame];
     NSRect statusRect = [self statusRectForWindow:panel];
@@ -318,44 +333,78 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
     id item = [_outlineView itemAtRow:[_outlineView selectedRow]];
     if (item != nil) {
         
-        // post decrypted password to clipboard
-        printf("decrypting %s\n", [[item fullPath] UTF8String]);
-        NSString *plain = [gpg decryptPasswordFromFile:[item fullPath]];
-        NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
-        [pasteboard clearContents];
-        [pasteboard
-            writeObjects:[NSArray
-                            arrayWithObject:plain]];
+        switch (state) {
+            case COPY:
+            {
+                // post decrypted password to clipboard
+                printf("decrypting %s\n", [[item fullPath] UTF8String]);
+                NSString *plain = [gpg decryptPasswordFromFile:[item fullPath]];
+                NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+                [pasteboard clearContents];
+                [pasteboard
+                 writeObjects:[NSArray
+                               arrayWithObject:plain]];
+                
+                int timeout = 45;
+                
+                // show notification
+                // credit http://blog.mahasoftware.com/post/28968246552/how-to-use-the-10-8-notification-center-api
+                NSUserNotification *notification = [[NSUserNotification alloc] init];
+                [notification setTitle:@"Password Store"];
+                [notification
+                 setInformativeText:[NSString
+                                     stringWithFormat:@"Copied %@ to clipboard. "
+                                     @"Will clear in %d seconds.",
+                                     [[item partialPath]
+                                      stringByDeletingPathExtension],
+                                     timeout]];
+                [notification setSoundName:NSUserNotificationDefaultSoundName];
+                
+                NSUserNotificationCenter *center = [NSUserNotificationCenter
+                                                    defaultUserNotificationCenter];
+                [center setDelegate:self];
+                [center deliverNotification:notification];
+                
+                // clear clipboard after 45 seconds
+                [NSTimer
+                 scheduledTimerWithTimeInterval:timeout
+                 target:pasteboard
+                 selector:@selector(clearContents)
+                 userInfo:nil
+                 repeats:NO];
+                break;
+            }
+                
+            case EDIT:
+            {
+                NSString *plain = [gpg decryptPasswordFromFile:[item fullPath]];
+                const char *new = [Utils promptUserFor:"Edit passphrase" label:"Passphrase" initial:[plain cStringUsingEncoding:NSUTF8StringEncoding]];
+                break;
+            }
+        }
+        
         [_outlineView deselectAll:item];
-        
-        int timeout = 45;
-        
-        // show notification
-        // credit http://blog.mahasoftware.com/post/28968246552/how-to-use-the-10-8-notification-center-api
-        NSUserNotification *notification = [[NSUserNotification alloc] init];
-        [notification setTitle:@"Password Store"];
-        [notification
-         setInformativeText:[NSString
-                             stringWithFormat:@"Copied %@ to clipboard. "
-                                              @"Will clear in %d seconds.",
-                                [[item partialPath]
-                                   stringByDeletingPathExtension],
-                                timeout]];
-        [notification setSoundName:NSUserNotificationDefaultSoundName];
-        
-        NSUserNotificationCenter *center = [NSUserNotificationCenter
-                                            defaultUserNotificationCenter];
-        [center setDelegate:self];
-        [center deliverNotification:notification];
-        
-        // clear clipboard after 45 seconds
-        [NSTimer
-            scheduledTimerWithTimeInterval:timeout
-            target:pasteboard
-            selector:@selector(clearContents)
-            userInfo:nil
-            repeats:NO];
     }
+}
+
+
+- (IBAction)addButton:(id)sender {
+    printf("add\n");
+    state = ADD;
+}
+
+- (IBAction)editButton:(id)sender {
+    printf("edit\n");
+    state = EDIT;
+}
+
+- (IBAction)deleteButton:(id)sender {
+    printf("delete\n");
+    state = DELETE;
+}
+
+- (IBAction)helpButton:(id)sender {
+    printf("help is not yet implemented\n");
 }
 
 - (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center
