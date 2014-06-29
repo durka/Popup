@@ -14,6 +14,7 @@
 
 static FileSystemItem *rootItem = nil;
 static NSMutableArray *leafNode = nil;
+static NSString *filter = nil;
 
 + (void)initialize
 {
@@ -50,6 +51,11 @@ static NSMutableArray *leafNode = nil;
     return rootItem;
 }
 
++(void)setFilter:(NSString*)filt
+{
+    filter = filt;
+}
+
 // Creates, caches, and returns the array of children
 // Loads children incrementally
 - (NSArray *)children
@@ -74,9 +80,18 @@ static NSMutableArray *leafNode = nil;
                 NSString *subpath = [array objectAtIndex:i];
                 if ([subpath characterAtIndex:0] != '.') {
                     FileSystemItem *newChild = [[FileSystemItem alloc]
-                                                    initWithPath:subpath
-                                                    parent:self];
-                    [children addObject:newChild];
+                                                initWithPath:subpath
+                                                parent:self];
+                    valid = [fileManager fileExistsAtPath:[newChild fullPath]
+                                              isDirectory:&isDir];
+                    printf("checking %s (dir: %d)\n", [[newChild partialPath] UTF8String], isDir);
+                    if (filter == nil ||
+                        isDir ||
+                        [[newChild partialPath]
+                         rangeOfString:filter].location != NSNotFound)
+                    {
+                        [children addObject:newChild];
+                    }
                 }
             }
         } else {

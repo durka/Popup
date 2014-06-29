@@ -16,6 +16,7 @@
 }
 
 +(FileSystemItem *)rootItem;
++(void)setFilter:(NSString*)filt;
 -(NSInteger)numberOfChildren;// Returns -1 for leaf nodes
 -(FileSystemItem *)childAtIndex:(NSUInteger)n; // Invalid to call on leaf nodes
 -(NSString *)fullPath;
