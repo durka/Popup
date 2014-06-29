@@ -8,6 +8,7 @@
 
 #import <CoreFoundation/CoreFoundation.h>
 #import "GPGManager.h"
+#import "Utils.h"
 
 @implementation GPGManager
 
@@ -57,17 +58,10 @@
 
 -(gpgme_error_t) writePassphraseToFile:(int)fd firstTry:(bool)first
 {
-    SInt32 err;
-    const void *keys[]   = {kCFUserNotificationAlertHeaderKey, kCFUserNotificationAlertMessageKey, kCFUserNotificationTextFieldTitlesKey},
-    *values[] = {CFSTR("Popup"), first ? CFSTR("Enter GPG passphrase") : CFSTR("Try again. Enter GPG passphrase"), CFSTR("Passphrase")};
-    CFDictionaryRef dict = CFDictionaryCreate(NULL, keys, values, 3, NULL, NULL);
-    CFUserNotificationRef dialog = CFUserNotificationCreate(NULL, 0, CFUserNotificationSecureTextField(0), &err, dict);
-    
-    CFOptionFlags response;
-    CFUserNotificationReceiveResponse(dialog, 0, &response);
-    
-    CFStringRef pass_str = CFUserNotificationGetResponseValue(dialog, kCFUserNotificationTextFieldValuesKey, 0);
-    const char *pass = CFStringGetCStringPtr(pass_str, CFStringGetFastestEncoding(pass_str));
+    const char *pass = [Utils promptUserFor:(first
+                                             ? "Enter GPG passphrase"
+                                             : "Try again. Enter GPG passphrase")
+                                      label:"Passphrase"];
     
     write(fd, pass, strlen(pass));
     write(fd, "\n", 1);
