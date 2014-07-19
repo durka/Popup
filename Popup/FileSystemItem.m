@@ -84,13 +84,16 @@ static NSString *filter = nil;
                                                 parent:self];
                     valid = [fileManager fileExistsAtPath:[newChild fullPath]
                                               isDirectory:&isDir];
-                    printf("checking %s (dir: %d)\n", [[newChild partialPath] UTF8String], isDir);
+                    //printf("checking %s (dir: %d)\n", [[newChild partialPath] UTF8String], isDir);
                     if (filter == nil ||
                         isDir ||
                         [[newChild partialPath]
                          rangeOfString:filter].location != NSNotFound)
                     {
-                        [children addObject:newChild];
+                        if ([newChild numberOfChildren] != 0)
+                        {
+                            [children addObject:newChild];
+                        }
                     }
                 }
             }

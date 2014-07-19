@@ -171,16 +171,36 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
     NSString *searchString = [self.searchField stringValue];
     if ([searchString length] > 0)
     {
-        printf("searching: %s\n", [searchString UTF8String]);
+        //printf("searching: %s\n", [searchString UTF8String]);
         [FileSystemItem setFilter:searchString];
     }
     else
     {
-        printf("clear search\n");
+        //printf("clear search\n");
         [FileSystemItem setFilter:nil];
         
     }
+    
     [_outlineView reloadData];
+    
+    // want to expand everything if there is room
+    // but too lazy to count
+    // solution: expand everything, if there is no room, collapse
+    // (it happens very fast)
+    if ([_outlineView numberOfRows] < ([self.scrollView bounds].size.height / [self.scrollView verticalLineScroll]))
+    {
+        for (int i = 0; i < [_outlineView numberOfRows]; ++i)
+        {
+            [_outlineView expandItem:[_outlineView itemAtRow:i] expandChildren:YES];
+        }
+    }
+    if ([_outlineView numberOfRows] > ([self.scrollView bounds].size.height / [self.scrollView verticalLineScroll]))
+    {
+        for (int i = 0; i < [_outlineView numberOfRows]; ++i)
+        {
+            [_outlineView collapseItem:[_outlineView itemAtRow:i] collapseChildren:YES];
+        }
+    }
 }
 
 #pragma mark - Public methods
