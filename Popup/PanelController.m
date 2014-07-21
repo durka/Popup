@@ -239,7 +239,8 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
     NSWindow *panel = [self window];
     
     // re-populate list
-    [_outlineView reloadData];
+    [self.searchField setStringValue:@""];
+    [self runSearch];
     state = COPY;
     
     NSRect screenRect = [[[NSScreen screens] objectAtIndex:0] frame];
