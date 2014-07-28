@@ -14,12 +14,14 @@
 
 static FileSystemItem *rootItem = nil;
 static NSMutableArray *leafNode = nil;
-static NSString *filter = nil;
+static NSRegularExpression *filter = nil;
+static NSMutableDictionary *leaves = nil;
 
 + (void)initialize
 {
     if (self == [FileSystemItem class]) {
         leafNode = [[NSMutableArray alloc] init];
+        leaves = [[NSMutableDictionary alloc] init];
     }
 }
 
@@ -51,9 +53,23 @@ static NSString *filter = nil;
     return rootItem;
 }
 
-+(void)setFilter:(NSString*)filt
++(void)setFilter:(NSRegularExpression*)filt
 {
     filter = filt;
+}
+
++(void)resetLeaves
+{
+    [leaves removeAllObjects];
+}
+
++(id)getLeaf
+{
+    if ([leaves count] == 1)
+    {
+        return [[leaves allValues] objectAtIndex:0];
+    }
+    return nil;
 }
 
 // Creates, caches, and returns the array of children
@@ -84,11 +100,13 @@ static NSString *filter = nil;
                                                 parent:self];
                     valid = [fileManager fileExistsAtPath:[newChild fullPath]
                                               isDirectory:&isDir];
-                    //printf("checking %s (dir: %d)\n", [[newChild partialPath] UTF8String], isDir);
                     if (filter == nil ||
                         isDir ||
-                        [[newChild partialPath]
-                         rangeOfString:filter].location != NSNotFound)
+                        [filter numberOfMatchesInString:[newChild partialPath]
+                                options:0
+                                range:NSMakeRange(0, [[newChild partialPath]
+                                                      length])]
+                            > 0)
                     {
                         if ([newChild numberOfChildren] != 0)
                         {
@@ -98,6 +116,8 @@ static NSString *filter = nil;
                 }
             }
         } else {
+            [leaves setObject:self forKey:[self partialPath]];
+            printf("leaf #%d! %s\n", [leaves count], [[self partialPath] UTF8String]);
             children = leafNode;
         }
     }

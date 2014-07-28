@@ -16,7 +16,9 @@
 }
 
 +(FileSystemItem *)rootItem;
-+(void)setFilter:(NSString*)filt;
++(void)setFilter:(NSRegularExpression*)filt;
++(void)resetLeaves;
++(id)getLeaf;
 -(NSInteger)numberOfChildren;// Returns -1 for leaf nodes
 -(FileSystemItem *)childAtIndex:(NSUInteger)n; // Invalid to call on leaf nodes
 -(NSString *)fullPath;

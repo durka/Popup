@@ -172,7 +172,15 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
     if ([searchString length] > 0)
     {
         //printf("searching: %s\n", [searchString UTF8String]);
-        [FileSystemItem setFilter:searchString];
+        [FileSystemItem setFilter:[NSRegularExpression
+                                   regularExpressionWithPattern:
+                                    [@"(^|/)"
+                                     stringByAppendingString:
+                                      [searchString
+                                       stringByReplacingOccurrencesOfString:@"/"
+                                       withString:@".*/"]]
+                                   options:NSRegularExpressionCaseInsensitive
+                                   error:NULL]];
     }
     else
     {
@@ -181,24 +189,31 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
         
     }
     
+    [FileSystemItem resetLeaves];
     [_outlineView reloadData];
     
     // want to expand everything if there is room
     // but too lazy to count
     // solution: expand everything, if there is no room, collapse
     // (it happens very fast)
-    if ([_outlineView numberOfRows] < ([self.scrollView bounds].size.height / [self.scrollView verticalLineScroll]))
+    [_outlineView collapseItem:nil collapseChildren:YES];
+    if ([_outlineView numberOfRows] < ([self.scrollView bounds].size.height
+                                       / [self.scrollView verticalLineScroll]))
     {
-        for (int i = 0; i < [_outlineView numberOfRows]; ++i)
+        [_outlineView expandItem:nil expandChildren:YES];
+        
+        if ([_outlineView numberOfRows] > ([self.scrollView bounds].size.height
+                                           / [self.scrollView verticalLineScroll]))
         {
-            [_outlineView expandItem:[_outlineView itemAtRow:i] expandChildren:YES];
+            [_outlineView collapseItem:nil collapseChildren:YES];
         }
-    }
-    if ([_outlineView numberOfRows] > ([self.scrollView bounds].size.height / [self.scrollView verticalLineScroll]))
-    {
-        for (int i = 0; i < [_outlineView numberOfRows]; ++i)
+        else
         {
-            [_outlineView collapseItem:[_outlineView itemAtRow:i] collapseChildren:YES];
+            FileSystemItem *item = [FileSystemItem getLeaf];
+            if (item != nil)
+            {
+                [_outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:[_outlineView rowForItem:item]] byExtendingSelection:NO];
+            }
         }
     }
 }
