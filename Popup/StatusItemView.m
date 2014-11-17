@@ -1,3 +1,5 @@
+#import "DDHotkeyCenter.h"
+#import "Carbon/Carbon.h"
 #import "StatusItemView.h"
 
 @implementation StatusItemView
@@ -22,6 +24,14 @@
         _statusItem = statusItem;
         _statusItem.view = self;
     }
+    
+    [[DDHotKeyCenter sharedHotKeyCenter]
+        registerHotKeyWithKeyCode:kVK_ANSI_P
+        modifierFlags:NSCommandKeyMask | NSAlternateKeyMask
+        task:^(NSEvent *evt) {
+            [NSApp sendAction:self.action to:self.target from:self];
+        }];
+    
     return self;
 }
 

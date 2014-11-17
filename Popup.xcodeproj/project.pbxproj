@@ -23,6 +23,10 @@
 		DDF4EFAE16C80AD30044D141 /* StatusHighlighted@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DDF4EFAD16C80AD30044D141 /* StatusHighlighted@2x.png */; };
 		FA15C3B518BD49390038F09D /* GPGManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FA15C3B418BD49390038F09D /* GPGManager.m */; };
 		FA15C3BB18C30F370038F09D /* FileSystemItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FA15C3BA18C30F370038F09D /* FileSystemItem.m */; };
+		FA7500E51986DC0300253F2F /* DDHotKeyCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = FA7500E01986DC0300253F2F /* DDHotKeyCenter.m */; };
+		FA7500E61986DC0300253F2F /* DDHotKeyTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = FA7500E21986DC0300253F2F /* DDHotKeyTextField.m */; };
+		FA7500E71986DC0300253F2F /* DDHotKeyUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = FA7500E41986DC0300253F2F /* DDHotKeyUtilities.m */; };
+		FA7500E91986DD8C00253F2F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA7500E81986DD8C00253F2F /* Carbon.framework */; };
 		FA83DA241915F2EA00E55D74 /* Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = FA83DA231915F2EA00E55D74 /* Utils.m */; };
 /* End PBXBuildFile section */
 
@@ -57,6 +61,13 @@
 		FA15C3B418BD49390038F09D /* GPGManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPGManager.m; sourceTree = "<group>"; };
 		FA15C3B918C30F370038F09D /* FileSystemItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemItem.h; sourceTree = "<group>"; };
 		FA15C3BA18C30F370038F09D /* FileSystemItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemItem.m; sourceTree = "<group>"; };
+		FA7500DF1986DC0300253F2F /* DDHotKeyCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DDHotKeyCenter.h; path = DDHotKey/DDHotKeyCenter.h; sourceTree = SOURCE_ROOT; };
+		FA7500E01986DC0300253F2F /* DDHotKeyCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DDHotKeyCenter.m; path = DDHotKey/DDHotKeyCenter.m; sourceTree = SOURCE_ROOT; };
+		FA7500E11986DC0300253F2F /* DDHotKeyTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DDHotKeyTextField.h; path = DDHotKey/DDHotKeyTextField.h; sourceTree = SOURCE_ROOT; };
+		FA7500E21986DC0300253F2F /* DDHotKeyTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DDHotKeyTextField.m; path = DDHotKey/DDHotKeyTextField.m; sourceTree = SOURCE_ROOT; };
+		FA7500E31986DC0300253F2F /* DDHotKeyUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DDHotKeyUtilities.h; path = DDHotKey/DDHotKeyUtilities.h; sourceTree = SOURCE_ROOT; };
+		FA7500E41986DC0300253F2F /* DDHotKeyUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DDHotKeyUtilities.m; path = DDHotKey/DDHotKeyUtilities.m; sourceTree = SOURCE_ROOT; };
+		FA7500E81986DD8C00253F2F /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		FA83DA221915F2EA00E55D74 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		FA83DA231915F2EA00E55D74 /* Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utils.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -66,6 +77,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA7500E91986DD8C00253F2F /* Carbon.framework in Frameworks */,
 				DD4F7C0913C30F9F00825C6E /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -95,6 +107,7 @@
 		DD4F7C0713C30F9F00825C6E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FA7500E81986DD8C00253F2F /* Carbon.framework */,
 				DD4F7C0B13C30F9F00825C6E /* AppKit.framework */,
 				DD4F7C0C13C30F9F00825C6E /* CoreData.framework */,
 				DD4F7C0D13C30F9F00825C6E /* Foundation.framework */,
@@ -118,6 +131,12 @@
 			isa = PBXGroup;
 			children = (
 				DD4F7C3D13C318D600825C6E /* PanelController.h */,
+				FA7500DF1986DC0300253F2F /* DDHotKeyCenter.h */,
+				FA7500E01986DC0300253F2F /* DDHotKeyCenter.m */,
+				FA7500E11986DC0300253F2F /* DDHotKeyTextField.h */,
+				FA7500E21986DC0300253F2F /* DDHotKeyTextField.m */,
+				FA7500E31986DC0300253F2F /* DDHotKeyUtilities.h */,
+				FA7500E41986DC0300253F2F /* DDHotKeyUtilities.m */,
 				DD4F7C1613C30F9F00825C6E /* Popup-Prefix.pch */,
 				DD4F7C1413C30F9F00825C6E /* main.m */,
 				FA15C3B318BD49390038F09D /* GPGManager.h */,
@@ -251,14 +270,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA15C3B518BD49390038F09D /* GPGManager.m in Sources */,
+				FA7500E71986DC0300253F2F /* DDHotKeyUtilities.m in Sources */,
 				DD4F7C1513C30F9F00825C6E /* main.m in Sources */,
 				DD4F7C1C13C30F9F00825C6E /* ApplicationDelegate.m in Sources */,
+				FA7500E61986DC0300253F2F /* DDHotKeyTextField.m in Sources */,
 				FA83DA241915F2EA00E55D74 /* Utils.m in Sources */,
 				DD4F7C3813C317A500825C6E /* MenubarController.m in Sources */,
 				DD4F7C3C13C3180800825C6E /* StatusItemView.m in Sources */,
 				DD4F7C3F13C318D600825C6E /* PanelController.m in Sources */,
 				DD4F7C4413C31BD200825C6E /* Panel.m in Sources */,
 				DD4F7C4713C3208500825C6E /* BackgroundView.m in Sources */,
+				FA7500E51986DC0300253F2F /* DDHotKeyCenter.m in Sources */,
 				FA15C3BB18C30F370038F09D /* FileSystemItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -312,7 +334,7 @@
 					/usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-lgpgme";
 				SDKROOT = macosx;
@@ -347,7 +369,7 @@
 					/usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = "-lgpgme";
 				SDKROOT = macosx;
 			};
