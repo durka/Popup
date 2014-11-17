@@ -60,5 +60,7 @@
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification;
 // NSUserNotificationCenter delegate
 - (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center shouldPresentNotification:(NSUserNotification *)notification;
+// NSSearchField delegate
+- (IBAction)searchAnswer:(id)sender;
 
 @end

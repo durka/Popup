@@ -39,6 +39,7 @@
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </searchFieldCell>
                         <connections>
+                            <action selector="searchAnswer:" target="-2" id="uKT-fz-kls"/>
                             <outlet property="delegate" destination="-2" id="29"/>
                         </connections>
                     </searchField>

@@ -166,6 +166,8 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
     self.hasActivePanel = NO;
 }
 
+BOOL search_running = NO;
+
 - (void)runSearch
 {
     NSString *searchString = [self.searchField stringValue];
@@ -207,13 +209,23 @@ void adjust_view(id field, NSRect bounds, CGFloat x, CGFloat y)
         {
             [_outlineView collapseItem:nil collapseChildren:YES];
         }
-        else
+    }
+    
+    search_running = YES;
+}
+
+- (IBAction)searchAnswer:(id)sender
+{
+    if (search_running == YES)
+    {
+        search_running = NO;
+    }
+    else
+    {
+        FileSystemItem *item = [FileSystemItem getLeaf];
+        if (item != nil)
         {
-            FileSystemItem *item = [FileSystemItem getLeaf];
-            if (item != nil)
-            {
-                [_outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:[_outlineView rowForItem:item]] byExtendingSelection:NO];
-            }
+            [_outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:[_outlineView rowForItem:item]] byExtendingSelection:NO];
         }
     }
 }
