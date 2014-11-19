@@ -41,8 +41,8 @@
 {
     if (self = [super init]) {
         version = gpgme_check_version(NULL);
+        printf("initialized GPGME version %s\n", version);
         [GPGManager guard:gpgme_engine_check_version(GPGME_PROTOCOL_OPENPGP) what:"checking engine version"];
-    
         [GPGManager guard:gpgme_new(&ctx) what:"creating context:"];
     
         gpgme_set_passphrase_cb(ctx, passphrase_thunk, (__bridge void *)(self));

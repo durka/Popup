@@ -117,7 +117,7 @@ static NSMutableDictionary *leaves = nil;
             }
         } else {
             [leaves setObject:self forKey:[self partialPath]];
-            printf("leaf #%d! %s\n", [leaves count], [[self partialPath] UTF8String]);
+            //printf("leaf #%d! %s\n", [leaves count], [[self partialPath] UTF8String]);
             children = leafNode;
         }
     }

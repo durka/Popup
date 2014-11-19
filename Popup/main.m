@@ -12,5 +12,10 @@ int main(int argc, char *argv[])
 {
     printf("hello world!\n");
     
+    char *newpath;
+    asprintf(&newpath, "%s:%s", "/usr/local/bin", getenv("PATH"));
+    setenv("PATH", newpath, true);
+    free(newpath);
+    
     return NSApplicationMain(argc, (const char **)argv);
 }
