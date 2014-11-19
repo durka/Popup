@@ -56,15 +56,68 @@
     gpgme_release(ctx);
 }
 
+char* sudo(const char *pass)
+{
+#define kill()                                     \
+    {                                              \
+        char *tmp = remembered;                    \
+        remembered = NULL;                         \
+        memset(tmp, 0, strlen(tmp));               \
+        free(tmp);                                 \
+    }
+    
+    static char *remembered = NULL;
+    static NSTimer *timer = nil;
+    const time_t timeout = 600;
+    
+    char *ret = NULL;
+    
+    if (timer != nil) {
+        [timer invalidate];
+        timer = nil;
+    }
+    
+    if (pass == NULL) {
+        // get old password
+        ret = remembered;
+    } else {
+        // store new password
+        if (remembered != NULL) kill();
+        remembered = malloc(strlen(pass)+1);
+        memset(remembered, 0, strlen(pass)+1);
+        strncpy(remembered, pass, strlen(pass));
+    }
+    
+    timer = [NSTimer
+             scheduledTimerWithTimeInterval:timeout
+             target:[NSBlockOperation blockOperationWithBlock:^{
+                printf("end sudo mode\n");
+                kill();
+             }]
+             selector:@selector(main)
+             userInfo:nil
+             repeats:NO];
+    
+    return ret;
+#undef kill
+}
+
 -(gpgme_error_t) writePassphraseToFile:(int)fd firstTry:(bool)first
 {
-    const char *pass = [Utils promptUserFor:(first
-                                             ? "Enter GPG passphrase"
-                                             : "Try again. Enter GPG passphrase")
-                                      label:"Passphrase"];
+    const char *pass = sudo(NULL);
+    if (pass == NULL) {
+        pass = [Utils promptUserFor:(first
+                                     ? "Enter GPG passphrase"
+                                     : "Try again. Enter GPG passphrase")
+                      label:"Passphrase"];
+        
+        // sudo mode
+        if (first) sudo(pass);
+    }
     
     write(fd, pass, strlen(pass));
     write(fd, "\n", 1);
+    
     return 0;
 }
 
